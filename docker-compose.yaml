@@ -6,7 +6,7 @@ services:
     working_dir: "${PWD}"
     entrypoint: [
       "/bin/bash", "-c",
-      "poetry install && poetry run pytest --capture=no $$@", "--"
+      "poetry install"
     ]
     #command: ["-x"]
     command: ["/bin/bash"]
