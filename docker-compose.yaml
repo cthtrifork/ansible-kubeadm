@@ -5,11 +5,11 @@ services:
     image: ${RUN_TEST_IMAGE:-ghcr.io/chtrifork/ansible-kubeadm:latest}
     working_dir: "${PWD}"
     entrypoint: [
-      "${PWD}/scripts/detect-user.sh",
       "/bin/bash", "-c",
       "poetry install && poetry run pytest --capture=no $$@", "--"
     ]
-    command: ["-x"]
+    #command: ["-x"]
+    command: ["/bin/bash"]
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ${PWD}:${PWD}
