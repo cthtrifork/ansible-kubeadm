@@ -10,5 +10,3 @@ services:
       "poetry install && poetry run pytest --capture=no $$@", "--"
     ]
     command: ["-x"]
-    extends:
-      service: terraform
