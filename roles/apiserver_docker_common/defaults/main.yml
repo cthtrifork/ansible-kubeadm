@@ -1,3 +1,0 @@
----
-apiserver_proxy_stack_dir: '/etc/docker-compose/apiserver-proxy'
-apiserver_proxy_use_docker:   # Not true, nor false to force user to make a choice

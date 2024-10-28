@@ -1,9 +1,0 @@
----
-services:
-  terraform:
-    volumes:
-      - ${OS_CLIENT_CONFIG_FILE}:${OS_CLIENT_CONFIG_FILE}
-
-  tests:
-    volumes:
-      - ${HOME}/.cache:${HOME}/.cache

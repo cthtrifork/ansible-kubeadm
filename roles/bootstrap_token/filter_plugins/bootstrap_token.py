@@ -1,1 +1,0 @@
-../../../plugins/filter/bootstrap_token.py

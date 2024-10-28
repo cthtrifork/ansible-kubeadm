@@ -1,4 +1,0 @@
----
-default_kubeadm_config:
-  apiVersion: kubeadm.k8s.io/v1beta2
-  kind: ClusterConfiguration

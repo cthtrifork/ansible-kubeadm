@@ -1,19 +1,10 @@
-### Install ansible-kubeadm an
+# Install ansible-kubeadm
 
-```
-ansible-galaxy collection install git+ssh://git@github.com/enix/ansible-kubeadm
-```
-
-Also install docker so we can have container running ^^
-```
-ansible-galaxy install geerlingguy.docker
-```
-
-### Prepare inventory
+## Prepare inventory
 
 create an inventory like this
 
-```
+```sh
 [kube_control_plane]
 kubeadm-cp-01   ansible_host=ip-cp1
 kubeadm-cp-02   ansible_host=ip-cp2
@@ -24,14 +15,13 @@ kubeadm-node-01 ansible_host=ip-no1
 # ... more nodes
 
 [all:vars]
-ansible_user=ubuntu
+ansible_user=caspertdk
 ansible_become=true
 ```
 
-### Run
+## Run
 
-```
-ansible -i hosts -m include_role -a"name=geerlingguy.docker" -e 'docker_daemon_options={"exec-opts"=["native.cgroupdriver=systemd"]}'
+```sh
 ansible-playbook -i hosts enix.kubeadm.00_apiserver_proxy.yml enix.kubeadm.01_site.yml
 ```
 

@@ -1,55 +1,8 @@
 ---
 services:
-  terraform:
-    image: hashicorp/terraform:${TERRAFORM_VERSION:-1.3.6}
-    working_dir: "${PWD}/tests/terraform/openstack"
-    entrypoint: ["${PWD}/scripts/detect-user.sh", "/bin/sh", "-c", "terraform $$@", "--"]
-    command: ["init"]
-    volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-    - ${PWD}:${PWD}
-    - /tmp:/tmp
-    - ./.test-ansible:${HOME}/.ansible
-    - ${_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/run}}:${_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/run}}
-    - ${SSH_KEY:-${HOME}}:${SSH_KEY_MOUNT:-${SSH_KEY:-${HOME}}}
-    environment:
-      KEEP_SERVERS:
-      KEEP_SERVERS_AFTER_FAIL:
-      HOME:
-      OS_AUTH_URL:
-      OS_CLOUD:
-      OS_CLIENT_CONFIG_FILE:
-      OS_DOMAIN_NAME:
-      OS_IDENTITY_API_VERSION:
-      OS_INTERFACE:
-      OS_PASSWORD:
-      OS_PROJECT_DOMAIN_ID:
-      OS_PROJECT_DOMAIN_NAME:
-      OS_PROJECT_ID:
-      OS_PROJECT_NAME:
-      OS_TENANT_ID:
-      OS_TENANT_NAME:
-      OS_TOKEN:
-      OS_REGION_NAME:
-      OS_USER_DOMAIN_NAME:
-      OS_USERNAME:
-      POETRY_CACHE_DIR: "${POETRY_CACHE_DIR:-/tmp}"
-      POETRY_VIRTUALENVS_PATH: "${POETRY_VIRTUALENVS_PATH:-/tmp}"
-      SSH_AUTH_SOCK: "${_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/run}}"
-      TF_VAR_allocate_private_net:
-      TF_VAR_control_plane_count:
-      TF_VAR_floating_pool:
-      TF_VAR_image_name:
-      TF_VAR_network_name:
-      TF_VAR_inventory_dir:
-      TF_VAR_ssh_key_path:
-      TF_VAR_stem:
-      TF_VAR_worker_count:
-
-
   tests:
     build: .
-    image: ${RUN_TEST_IMAGE:-ghcr.io/enix/ansible-kubeadm:latest}
+    image: ${RUN_TEST_IMAGE:-ghcr.io/chtrifork/ansible-kubeadm:latest}
     working_dir: "${PWD}"
     entrypoint: [
       "${PWD}/scripts/detect-user.sh",
@@ -59,42 +12,3 @@ services:
     command: ["-x"]
     extends:
       service: terraform
-
-  shell:
-    entrypoint: ["${PWD}/scripts/detect-user.sh"]
-    command: ["/bin/bash"]
-    extends:
-      service: tests
-  terraform_dev:
-    extends:
-      service: terraform
-    environment:
-      TF_VAR_inventory_dir: "${PWD}/tests/dev"
-    command: ["apply", "-auto-approve"]
-    depends_on:
-      terraform:
-        condition: service_completed_successfully
-  dev:
-    extends:
-      service: tests
-    environment:
-      ANSIBLE_HOST_KEY_CHECKING: false
-    depends_on:
-      terraform_dev:
-        condition: service_completed_successfully
-    entrypoint:
-      - "${PWD}/scripts/detect-user.sh"
-      - "/bin/bash"
-      - "-c"
-      - >
-        poetry install --with ansible &&
-        poetry run ansible-galaxy install -r tests/ansible.requirements.yml &&
-        poetry run ansible-playbook
-        -i tests/dev/kubeadm-hosts.cfg
-        tests/playbooks/prepare.yml
-        playbooks/00_apiserver_proxy.yml
-        playbooks/01-site.yml
-        tests/playbooks/cni.yml
-        $$@
-      - "--"
-    command: []
