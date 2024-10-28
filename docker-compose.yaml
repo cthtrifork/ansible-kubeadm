@@ -10,3 +10,13 @@ services:
       "poetry install && poetry run pytest --capture=no $$@", "--"
     ]
     command: ["-x"]
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ${PWD}:${PWD}
+        - /tmp:/tmp
+        - ${_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/run}}:${_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/run}}
+        - ${SSH_KEY:-${HOME}}:${SSH_KEY_MOUNT:-${SSH_KEY:-${HOME}}}
+    environment:
+        POETRY_CACHE_DIR: "${POETRY_CACHE_DIR:-/tmp}"
+        POETRY_VIRTUALENVS_PATH: "${POETRY_VIRTUALENVS_PATH:-/tmp}"
+        SSH_AUTH_SOCK: "${_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/run}}"
